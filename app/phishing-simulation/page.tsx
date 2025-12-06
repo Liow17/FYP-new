@@ -1,0 +1,654 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+
+interface EmailScenario {
+  id?: number;
+  from: string;
+  subject: string;
+  body: string;
+  type?: string;
+  isPhishing?: boolean;
+  redFlags: string[];
+  explanation: string;
+}
+
+interface URLScenario {
+  id: number;
+  url: string;
+  displayText: string;
+  isPhishing: boolean;
+  explanation: string;
+}
+
+interface LoginPageScenario {
+  id: number;
+  siteName: string;
+  url: string;
+  hasHttps: boolean;
+  hasSuspiciousDomain: boolean;
+  hasSpellingErrors: boolean;
+  isPhishing: boolean;
+  explanation: string;
+}
+
+const emailScenarios: EmailScenario[] = [
+  {
+    id: 1,
+    from: "security@paypa1-support.com",
+    subject: "URGENT: Your Account Has Been Locked",
+    body: "Dear Valued Customer,\n\nYour PayPal account has been locked due to suspicious activity. To unlock your account immediately, please click the link below and verify your information within 24 hours or your account will be permanently deleted.\n\nClick here to verify: http://paypa1-verify.com/login\n\nThank you,\nPayPal Security Team",
+    isPhishing: true,
+    redFlags: [
+      "Sender domain 'paypa1-support.com' uses number '1' instead of letter 'l'",
+      "Creates urgency with threats of account deletion",
+      "Generic greeting 'Dear Valued Customer' instead of your name",
+      "Suspicious URL with HTTP instead of HTTPS",
+      "Domain 'paypa1-verify.com' is not official PayPal domain"
+    ],
+    explanation: "This is a classic phishing email. Legitimate companies don't threaten to delete accounts, use generic greetings, or send suspicious links. Always verify by going directly to the company's official website."
+  },
+  {
+    id: 2,
+    from: "it-support@yourcompany.com",
+    subject: "Password Reset Required",
+    body: "Hello John Smith,\n\nAs part of our routine security update, we need you to reset your password. Please use the link below to access the secure password reset portal:\n\nhttps://yourcompany.com/reset-password\n\nIf you have any questions, please contact IT Support at extension 4521.\n\nBest regards,\nIT Support Team\nYour Company Inc.",
+    isPhishing: false,
+    redFlags: [],
+    explanation: "This appears to be a legitimate email. It uses your actual name, comes from the company domain, links to the official company website with HTTPS, provides contact information, and doesn't create false urgency."
+  },
+  {
+    id: 3,
+    from: "no-reply@amazon-security.xyz",
+    subject: "Confirm Your Recent Order #8729-4561",
+    body: "Dear Customer,\n\nWe noticed an order for $899.99 was placed on your account. If you did not make this purchase, please click below to cancel:\n\nhttp://amzn-secure-cancel.xyz/order/cancel?id=8729\n\nOrder Details:\n- iPhone 14 Pro Max\n- Quantity: 1\n- Total: $899.99\n\nAmazon Customer Service",
+    isPhishing: true,
+    redFlags: [
+      "Domain '.xyz' is suspicious for Amazon",
+      "Creates urgency with fake high-value order",
+      "Generic greeting without your actual name",
+      "URL uses HTTP instead of HTTPS",
+      "Suspicious domain 'amzn-secure-cancel.xyz' is not amazon.com"
+    ],
+    explanation: "This phishing email uses fear tactics about a fake purchase to get you to click. Amazon uses amazon.com domain, HTTPS links, and doesn't use '.xyz' domains. Always check orders by logging into the official website directly."
+  }
+];
+
+const urlScenarios: URLScenario[] = [
+  {
+    id: 1,
+    url: "http://g00gle.com/signin",
+    displayText: "Google Sign In",
+    isPhishing: true,
+    explanation: "This URL uses '00' (zeros) instead of 'oo' in 'google'. This is called typosquatting. The legitimate Google domain is 'google.com' with the letter 'o', not the number '0'."
+  },
+  {
+    id: 2,
+    url: "https://login.microsoft.com/oauth2/authorize",
+    displayText: "Microsoft Login",
+    isPhishing: false,
+    explanation: "This is a legitimate Microsoft URL. It uses HTTPS, the correct domain 'microsoft.com', and a standard OAuth path. Always verify the exact domain spelling."
+  },
+  {
+    id: 3,
+    url: "https://secure-netflix-billing.com/update-payment",
+    displayText: "Update Netflix Payment",
+    isPhishing: true,
+    explanation: "While this uses HTTPS, the domain 'secure-netflix-billing.com' is NOT the official Netflix domain. The real Netflix uses 'netflix.com'. Attackers can get HTTPS certificates for phishing sites too."
+  },
+  {
+    id: 4,
+    url: "http://bankofamerica.verify-account.ru/login",
+    displayText: "Bank of America Login",
+    isPhishing: true,
+    explanation: "This URL has multiple red flags: uses HTTP (not HTTPS), has a suspicious '.ru' (Russia) top-level domain, and includes 'verify-account' subdomain. Bank of America's real domain is 'bankofamerica.com'."
+  }
+];
+
+const loginPageScenarios: LoginPageScenario[] = [
+  {
+    id: 1,
+    siteName: "PayPal",
+    url: "http://paypal-secure.support.com",
+    hasHttps: false,
+    hasSuspiciousDomain: true,
+    hasSpellingErrors: false,
+    isPhishing: true,
+    explanation: "This is a phishing site. It lacks HTTPS encryption and uses a fake domain 'paypal-secure.support.com'. The real PayPal is at 'paypal.com' and always uses HTTPS."
+  },
+  {
+    id: 2,
+    siteName: "Facebook",
+    url: "https://facebook.com/login",
+    hasHttps: true,
+    hasSuspiciousDomain: false,
+    hasSpellingErrors: false,
+    isPhishing: false,
+    explanation: "This is legitimate. It uses HTTPS, the correct domain 'facebook.com', and has no suspicious elements. Always verify these security indicators before logging in."
+  },
+  {
+    id: 3,
+    siteName: "Apple ID",
+    url: "https://appleid.apple.com.verify-account.net",
+    hasHttps: true,
+    hasSuspiciousDomain: true,
+    hasSpellingErrors: false,
+    isPhishing: true,
+    explanation: "Despite having HTTPS, this is a phishing site. The actual domain is 'verify-account.net', NOT 'apple.com'. The real Apple ID site is 'appleid.apple.com'. Attackers place legitimate-looking text before their fake domain."
+  }
+];
+
+export default function PhishingSimulation() {
+  // Email simulation state
+  const [currentEmailIndex, setCurrentEmailIndex] = useState(0);
+  const [emailAnswers, setEmailAnswers] = useState<{ [key: number]: boolean | null }>({});
+  const [showEmailExplanation, setShowEmailExplanation] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiTutorFeedback, setAiTutorFeedback] = useState<string>("");
+  const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
+  const [dynamicEmail, setDynamicEmail] = useState<EmailScenario | null>(null);
+  const [useDynamicEmail, setUseDynamicEmail] = useState(false);
+
+  // URL simulation state
+  const [urlAnswers, setUrlAnswers] = useState<{ [key: number]: boolean | null }>({});
+  const [showUrlExplanations, setShowUrlExplanations] = useState<{ [key: number]: boolean }>({});
+
+  // Login page simulation state
+  const [loginAnswers, setLoginAnswers] = useState<{ [key: number]: boolean | null }>({});
+  const [showLoginExplanations, setShowLoginExplanations] = useState<{ [key: number]: boolean }>({});
+
+  // Get the current email (either dynamic or from static scenarios)
+  const currentEmail = useDynamicEmail && dynamicEmail
+    ? dynamicEmail
+    : emailScenarios[currentEmailIndex];
+
+  // Generate a new dynamic phishing scenario
+  const generateNewScenario = async () => {
+    setIsGenerating(true);
+    setAiTutorFeedback("");
+    setShowEmailExplanation(false);
+    try {
+      const response = await fetch("/api/generate-scenario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ difficulty: "medium" }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate scenario");
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+        return;
+      }
+
+      // Convert the scenario to our format
+      const newScenario: EmailScenario = {
+        from: data.scenario.from,
+        subject: data.scenario.subject,
+        body: data.scenario.body,
+        type: data.scenario.type,
+        isPhishing: data.scenario.type.toLowerCase() === "phishing",
+        redFlags: data.scenario.redFlags || [],
+        explanation: data.scenario.explanation,
+      };
+
+      setDynamicEmail(newScenario);
+      setUseDynamicEmail(true);
+    } catch (error) {
+      console.error("Error generating scenario:", error);
+      alert("Unable to generate a new scenario. This feature requires network access.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Get AI Tutor feedback
+  const getAITutorFeedback = async (userAnswer: string, correctAnswer: string) => {
+    setIsLoadingFeedback(true);
+    try {
+      const response = await fetch("/api/ai-tutor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scenario: {
+            from: currentEmail.from,
+            subject: currentEmail.subject,
+            body: currentEmail.body,
+            type: currentEmail.type || (currentEmail.isPhishing ? "Phishing" : "Legitimate"),
+            redFlags: currentEmail.redFlags,
+          },
+          userAnswer,
+          correctAnswer,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get feedback");
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        setAiTutorFeedback("Unable to get AI feedback at this time.");
+      } else {
+        setAiTutorFeedback(data.feedback);
+      }
+    } catch (error) {
+      console.error("Error getting AI feedback:", error);
+      setAiTutorFeedback("AI Tutor is unavailable. This feature requires network access.");
+    } finally {
+      setIsLoadingFeedback(false);
+    }
+  };
+
+  const handleEmailAnswer = async (isPhishing: boolean) => {
+    const emailId = currentEmail.id || 0;
+    setEmailAnswers({ ...emailAnswers, [emailId]: isPhishing });
+    setShowEmailExplanation(true);
+
+    // Get AI Tutor feedback
+    const userAnswer = isPhishing ? "Phishing" : "Legitimate";
+    const correctAnswer = (currentEmail.isPhishing || currentEmail.type?.toLowerCase() === "phishing")
+      ? "Phishing"
+      : "Legitimate";
+
+    await getAITutorFeedback(userAnswer, correctAnswer);
+  };
+
+  const handleNextEmail = () => {
+    if (useDynamicEmail) {
+      // In dynamic mode, reset to allow new generation
+      setUseDynamicEmail(false);
+      setDynamicEmail(null);
+      setAiTutorFeedback("");
+    } else if (currentEmailIndex < emailScenarios.length - 1) {
+      setCurrentEmailIndex(currentEmailIndex + 1);
+    }
+    setShowEmailExplanation(false);
+  };
+
+  const handlePrevEmail = () => {
+    if (useDynamicEmail) {
+      // Exit dynamic mode and go back to static scenarios
+      setUseDynamicEmail(false);
+      setDynamicEmail(null);
+      setAiTutorFeedback("");
+    } else if (currentEmailIndex > 0) {
+      setCurrentEmailIndex(currentEmailIndex - 1);
+    }
+    setShowEmailExplanation(false);
+  };
+
+  const handleUrlAnswer = (id: number, isPhishing: boolean) => {
+    setUrlAnswers({ ...urlAnswers, [id]: isPhishing });
+    setShowUrlExplanations({ ...showUrlExplanations, [id]: true });
+  };
+
+  const handleLoginAnswer = (id: number, isPhishing: boolean) => {
+    setLoginAnswers({ ...loginAnswers, [id]: isPhishing });
+    setShowLoginExplanations({ ...showLoginExplanations, [id]: true });
+  };
+
+  const emailId = currentEmail.id || 0;
+  const currentEmailIsPhishing = currentEmail.isPhishing || currentEmail.type?.toLowerCase() === 'phishing';
+  const isEmailCorrect = emailAnswers[emailId] === currentEmailIsPhishing;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="container mx-auto px-4 py-8">
+        <Link href="/" className="text-purple-600 dark:text-purple-400 hover:underline mb-8 inline-block">
+          ← Back to Home
+        </Link>
+
+        <header className="text-center mb-12">
+          <div className="flex items-center justify-center w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full mx-auto mb-6">
+            <svg className="w-8 h-8 text-purple-600 dark:text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+            </svg>
+          </div>
+          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+            Phishing Simulation Training
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            Practice identifying phishing attempts in realistic scenarios. Test your skills with suspicious emails, URLs, and fake login pages.
+          </p>
+        </header>
+
+        {/* Email Scenario Simulation */}
+        <section className="max-w-4xl mx-auto mb-16">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
+              📧 Email Scenario Analysis
+            </h2>
+            <button
+              onClick={generateNewScenario}
+              disabled={isGenerating}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all flex items-center gap-2"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Generate New Scenario
+                </>
+              )}
+            </button>
+          </div>
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-2">
+            Examine the email below. Is it legitimate or a phishing attempt?
+          </p>
+          {useDynamicEmail && (
+            <p className="text-center text-sm text-purple-600 dark:text-purple-400 mb-6 font-semibold">
+              🤖 AI-Generated Scenario - Powered by Google Gemini
+            </p>
+          )}
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 mb-6">
+            {/* Email Header */}
+            <div className="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+              <div className="mb-2">
+                <span className="font-semibold text-gray-700 dark:text-gray-300">From: </span>
+                <span className="text-gray-800 dark:text-white font-mono">{currentEmail.from}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Subject: </span>
+                <span className="text-gray-800 dark:text-white">{currentEmail.subject}</span>
+              </div>
+            </div>
+
+            {/* Email Body */}
+            <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded mb-6">
+              <pre className="whitespace-pre-wrap font-sans text-gray-800 dark:text-gray-200">
+                {currentEmail.body}
+              </pre>
+            </div>
+
+            {/* Answer Buttons */}
+            {!showEmailExplanation && (
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => handleEmailAnswer(true)}
+                  className="bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+                >
+                  🚨 This is Phishing
+                </button>
+                <button
+                  onClick={() => handleEmailAnswer(false)}
+                  className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+                >
+                  ✅ This is Legitimate
+                </button>
+              </div>
+            )}
+
+            {/* Explanation */}
+            {showEmailExplanation && (
+              <div className="space-y-4">
+                {/* AI Tutor Feedback */}
+                {isLoadingFeedback ? (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 p-6 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                      <p className="text-blue-800 dark:text-blue-200 font-semibold">
+                        🤖 AI Tutor is analyzing your answer...
+                      </p>
+                    </div>
+                  </div>
+                ) : aiTutorFeedback && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 p-6 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <div className="text-3xl">🤖</div>
+                      <div>
+                        <h4 className="text-lg font-bold text-blue-800 dark:text-blue-200 mb-2">
+                          AI Tutor Feedback
+                        </h4>
+                        <p className="text-gray-800 dark:text-gray-200">
+                          {aiTutorFeedback}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Standard Explanation */}
+                <div className={`p-6 rounded-lg ${isEmailCorrect ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-500' : 'bg-red-50 dark:bg-red-900/20 border-2 border-red-500'}`}>
+                  <h3 className="text-xl font-bold mb-3">
+                    {isEmailCorrect ? '✅ Correct!' : '❌ Incorrect'}
+                  </h3>
+
+                  <p className="text-gray-800 dark:text-gray-200 mb-4">
+                    <strong>Answer:</strong> This email is {(currentEmail.isPhishing || currentEmail.type?.toLowerCase() === 'phishing') ? 'PHISHING' : 'LEGITIMATE'}
+                  </p>
+
+                  {currentEmail.redFlags.length > 0 && (
+                    <div className="mb-4">
+                      <p className="font-semibold text-gray-800 dark:text-white mb-2">🚩 Red Flags:</p>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
+                        {currentEmail.redFlags.map((flag, index) => (
+                          <li key={index}>{flag}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <p className="text-gray-700 dark:text-gray-300">
+                    <strong>Explanation:</strong> {currentEmail.explanation}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Navigation */}
+          <div className="flex justify-between items-center">
+            <button
+              onClick={handlePrevEmail}
+              disabled={!useDynamicEmail && currentEmailIndex === 0}
+              className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                !useDynamicEmail && currentEmailIndex === 0
+                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
+                  : 'bg-purple-600 hover:bg-purple-700 text-white'
+              }`}
+            >
+              ← {useDynamicEmail ? 'Back to Examples' : 'Previous'}
+            </button>
+
+            <span className="text-gray-600 dark:text-gray-300">
+              {useDynamicEmail ? (
+                <span className="text-purple-600 dark:text-purple-400 font-semibold">AI-Generated</span>
+              ) : (
+                <>Email {currentEmailIndex + 1} of {emailScenarios.length}</>
+              )}
+            </span>
+
+            <button
+              onClick={handleNextEmail}
+              disabled={!useDynamicEmail && currentEmailIndex === emailScenarios.length - 1}
+              className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                !useDynamicEmail && currentEmailIndex === emailScenarios.length - 1
+                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
+                  : 'bg-purple-600 hover:bg-purple-700 text-white'
+              }`}
+            >
+              {useDynamicEmail ? 'Back to Examples →' : 'Next →'}
+            </button>
+          </div>
+        </section>
+
+        {/* URL Analysis Simulation */}
+        <section className="max-w-4xl mx-auto mb-16">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
+            🔗 URL Safety Analysis
+          </h2>
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
+            Examine each URL carefully. Can you spot the phishing links?
+          </p>
+
+          <div className="space-y-6">
+            {urlScenarios.map((scenario) => {
+              const userAnswer = urlAnswers[scenario.id];
+              const isCorrect = userAnswer === scenario.isPhishing;
+              const hasAnswered = userAnswer !== undefined && userAnswer !== null;
+
+              return (
+                <div key={scenario.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Link appears as:</p>
+                    <p className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-3">
+                      {scenario.displayText}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Actual URL:</p>
+                    <div className="bg-gray-100 dark:bg-gray-900 p-3 rounded font-mono text-sm break-all">
+                      {scenario.url}
+                    </div>
+                  </div>
+
+                  {!hasAnswered && (
+                    <div className="flex gap-4 justify-center">
+                      <button
+                        onClick={() => handleUrlAnswer(scenario.id, true)}
+                        className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
+                      >
+                        🚨 Phishing
+                      </button>
+                      <button
+                        onClick={() => handleUrlAnswer(scenario.id, false)}
+                        className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
+                      >
+                        ✅ Safe
+                      </button>
+                    </div>
+                  )}
+
+                  {showUrlExplanations[scenario.id] && (
+                    <div className={`mt-4 p-4 rounded-lg ${isCorrect ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-500' : 'bg-red-50 dark:bg-red-900/20 border-2 border-red-500'}`}>
+                      <p className="font-bold mb-2">
+                        {isCorrect ? '✅ Correct!' : '❌ Incorrect'}
+                      </p>
+                      <p className="text-gray-800 dark:text-gray-200 mb-2">
+                        <strong>This URL is {scenario.isPhishing ? 'PHISHING' : 'SAFE'}</strong>
+                      </p>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        {scenario.explanation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Login Page Detection Simulation */}
+        <section className="max-w-4xl mx-auto mb-16">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
+            🔐 Fake Login Page Detection
+          </h2>
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
+            Analyze these login pages. Which ones are fake?
+          </p>
+
+          <div className="space-y-6">
+            {loginPageScenarios.map((scenario) => {
+              const userAnswer = loginAnswers[scenario.id];
+              const isCorrect = userAnswer === scenario.isPhishing;
+              const hasAnswered = userAnswer !== undefined && userAnswer !== null;
+
+              return (
+                <div key={scenario.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                    {scenario.siteName} Login Page
+                  </h3>
+
+                  <div className="mb-4 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className={`px-3 py-1 rounded text-sm font-semibold ${scenario.hasHttps ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}`}>
+                        {scenario.hasHttps ? '🔒 HTTPS' : '⚠️ HTTP'}
+                      </span>
+                    </div>
+                    <div className="bg-gray-100 dark:bg-gray-900 p-3 rounded font-mono text-sm break-all">
+                      {scenario.url}
+                    </div>
+                  </div>
+
+                  {!hasAnswered && (
+                    <div className="flex gap-4 justify-center">
+                      <button
+                        onClick={() => handleLoginAnswer(scenario.id, true)}
+                        className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
+                      >
+                        🚨 Fake/Phishing
+                      </button>
+                      <button
+                        onClick={() => handleLoginAnswer(scenario.id, false)}
+                        className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
+                      >
+                        ✅ Legitimate
+                      </button>
+                    </div>
+                  )}
+
+                  {showLoginExplanations[scenario.id] && (
+                    <div className={`mt-4 p-4 rounded-lg ${isCorrect ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-500' : 'bg-red-50 dark:bg-red-900/20 border-2 border-red-500'}`}>
+                      <p className="font-bold mb-2">
+                        {isCorrect ? '✅ Correct!' : '❌ Incorrect'}
+                      </p>
+                      <p className="text-gray-800 dark:text-gray-200 mb-2">
+                        <strong>This is {scenario.isPhishing ? 'a FAKE/PHISHING site' : 'LEGITIMATE'}</strong>
+                      </p>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        {scenario.explanation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Summary Tips */}
+        <section className="max-w-4xl mx-auto">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 rounded-lg p-6">
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+              💡 Key Takeaways
+            </h3>
+            <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span><strong>Always verify the sender's email domain</strong> - Look for misspellings or suspicious domains</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span><strong>Check for HTTPS and the exact domain</strong> - Don't be fooled by similar-looking URLs</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span><strong>Be suspicious of urgency and threats</strong> - Legitimate companies don't threaten account deletion</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span><strong>Hover over links before clicking</strong> - The displayed text may not match the actual URL</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span><strong>When in doubt, go directly to the official website</strong> - Don't click email links for sensitive actions</span>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
