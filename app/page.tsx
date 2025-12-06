@@ -2,116 +2,167 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="container mx-auto px-4 py-16">
-        <header className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-800 dark:text-white mb-4">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-white mb-4">
             Cybersecurity Awareness Platform
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            Build your knowledge of essential cybersecurity concepts
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            Learn essential cybersecurity concepts through interactive modules designed for university students
           </p>
-        </header>
+        </div>
 
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Password Security Module */}
           <Link href="/password-security">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow cursor-pointer h-full">
-              <div className="flex items-center justify-center w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full mb-4">
-                <svg className="w-5 h-5 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-blue-500 hover:scale-105 duration-300">
+              <div className="text-4xl mb-4">🔐</div>
+              <h2 className="text-2xl font-bold text-white mb-3">
                 Password Security
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Learn about creating strong, secure passwords and test your password strength with our interactive meter powered by zxcvbn.
+              <p className="text-gray-300 mb-4">
+                Learn how to create strong, secure passwords and understand password security best practices.
               </p>
-              <ul className="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                <li>✓ Password strength fundamentals</li>
-                <li>✓ Interactive password testing</li>
-                <li>✓ Best practices and tips</li>
-                <li>✓ Knowledge assessment quiz (10 questions)</li>
+              <ul className="text-sm text-gray-400 space-y-2 mb-4">
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Interactive password strength meter
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Real-time feedback using zxcvbn
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Practical security tips
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Knowledge assessment quiz
+                </li>
               </ul>
+              <div className="text-blue-400 font-semibold">
+                Start Learning →
+              </div>
             </div>
           </Link>
 
           {/* Phishing Awareness Module */}
           <Link href="/phishing-awareness">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow cursor-pointer h-full">
-              <div className="flex items-center justify-center w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full mb-4">
-                <svg className="w-5 h-5 text-red-600 dark:text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-red-500 hover:scale-105 duration-300">
+              <div className="text-4xl mb-4">🎣</div>
+              <h2 className="text-2xl font-bold text-white mb-3">
                 Phishing Awareness
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Understand phishing attacks, recognize warning signs, and learn how to protect yourself from email scams and social engineering.
+              <p className="text-gray-300 mb-4">
+                Identify phishing attacks and protect yourself from social engineering threats.
               </p>
-              <ul className="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                <li>✓ What is phishing?</li>
-                <li>✓ Common attack patterns</li>
-                <li>✓ How to identify scams</li>
-                <li>✓ Knowledge assessment quiz</li>
+              <ul className="text-sm text-gray-400 space-y-2 mb-4">
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Recognize phishing tactics
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Real-world examples
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Protection strategies
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Knowledge assessment quiz
+                </li>
               </ul>
+              <div className="text-red-400 font-semibold">
+                Start Learning →
+              </div>
             </div>
           </Link>
 
           {/* Phishing Simulation Module */}
           <Link href="/phishing-simulation">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow cursor-pointer h-full">
-              <div className="flex items-center justify-center w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full mb-4">
-                <svg className="w-5 h-5 text-purple-600 dark:text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-purple-500 hover:scale-105 duration-300">
+              <div className="text-4xl mb-4">🎯</div>
+              <h2 className="text-2xl font-bold text-white mb-3">
                 Phishing Simulation
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Practice identifying phishing attempts with realistic scenarios. Analyze suspicious emails, URLs, and fake login pages.
+              <p className="text-gray-300 mb-4">
+                Practice identifying phishing attempts with realistic scenarios in a safe environment.
               </p>
-              <ul className="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                <li>✓ Email scenario analysis</li>
-                <li>✓ URL safety inspection</li>
-                <li>✓ Fake login page detection</li>
-                <li>✓ Real-world phishing examples</li>
+              <ul className="text-sm text-gray-400 space-y-2 mb-4">
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Email scenario analysis
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  URL safety inspection
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Fake login page detection
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Real-world phishing examples
+                </li>
               </ul>
+              <div className="text-purple-400 font-semibold">
+                Start Learning →
+              </div>
             </div>
           </Link>
 
           {/* AI Assistant Module */}
           <Link href="/ai-assistant">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow cursor-pointer h-full">
-              <div className="flex items-center justify-center w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full mb-4">
-                <svg className="w-5 h-5 text-green-600 dark:text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-                AI Assistant
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-green-500 hover:scale-105 duration-300">
+              <div className="text-4xl mb-4">🤖</div>
+              <h2 className="text-2xl font-bold text-white mb-3">
+                AI Security Tutor
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Get instant answers to your cybersecurity questions from our AI assistant powered by Google Gemini.
+              <p className="text-gray-300 mb-4">
+                Get instant answers to your cybersecurity questions from our intelligent AI assistant.
               </p>
-              <ul className="text-sm text-gray-500 dark:text-gray-400 space-y-2">
-                <li>✓ Ask about phishing & passwords</li>
-                <li>✓ Get personalized advice</li>
-                <li>✓ Learn best practices</li>
-                <li>✓ 24/7 availability</li>
+              <ul className="text-sm text-gray-400 space-y-2 mb-4">
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Ask about phishing & passwords
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Get personalized advice
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  Learn best practices
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-400 mr-2">✓</span>
+                  24/7 availability
+                </li>
               </ul>
+              <div className="text-green-400 font-semibold">
+                Start Learning →
+              </div>
             </div>
           </Link>
         </div>
 
-        <footer className="text-center mt-16 text-gray-600 dark:text-gray-400">
-          <p className="text-sm">
-            No login required • All interactions are client-side • Built for non-technical learners
-          </p>
-        </footer>
+        <div className="mt-16 text-center">
+          <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-md p-6 max-w-3xl mx-auto">
+            <h3 className="text-lg font-semibold text-white mb-2">
+              About This Platform
+            </h3>
+            <p className="text-gray-300">
+              This platform provides interactive, module-based learning for non-technical university students.
+              All learning happens locally in your browser—no login or account required.
+              Each module includes educational content, interactive tools, and automated quizzes to test your knowledge.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
