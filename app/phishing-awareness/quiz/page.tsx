@@ -170,7 +170,7 @@ export default function PhishingQuiz() {
   const percentage = submitted ? Math.round((score / questions.length) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <Link href="/phishing-awareness" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block">
           ← Back to Phishing Awareness

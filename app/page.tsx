@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-white mb-4">
@@ -16,7 +16,7 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Password Security Module */}
           <Link href="/password-security">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-blue-500 hover:scale-105 duration-300">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-blue-500 duration-300">
               <div className="text-4xl mb-4">🔐</div>
               <h2 className="text-2xl font-bold text-white mb-3">
                 Password Security
@@ -50,7 +50,7 @@ export default function Home() {
 
           {/* Phishing Awareness Module */}
           <Link href="/phishing-awareness">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-red-500 hover:scale-105 duration-300">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-red-500 duration-300">
               <div className="text-4xl mb-4">🎣</div>
               <h2 className="text-2xl font-bold text-white mb-3">
                 Phishing Awareness
@@ -84,7 +84,7 @@ export default function Home() {
 
           {/* Phishing Simulation Module */}
           <Link href="/phishing-simulation">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-purple-500 hover:scale-105 duration-300">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-purple-500 duration-300">
               <div className="text-4xl mb-4">🎯</div>
               <h2 className="text-2xl font-bold text-white mb-3">
                 Phishing Simulation
@@ -118,7 +118,7 @@ export default function Home() {
 
           {/* AI Assistant Module */}
           <Link href="/ai-assistant">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-green-500 hover:scale-105 duration-300">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-green-500 duration-300">
               <div className="text-4xl mb-4">🤖</div>
               <h2 className="text-2xl font-bold text-white mb-3">
                 AI Security Tutor

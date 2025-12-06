@@ -2,43 +2,39 @@ import Link from "next/link";
 
 export default function PhishingAwareness() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block">
           ← Back to Home
         </Link>
 
         <header className="text-center mb-12">
-          <div className="flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full mx-auto mb-6">
-            <svg className="w-8 h-8 text-red-600 dark:text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+          <div className="text-6xl mb-6">🎣</div>
+          <h1 className="text-4xl font-bold text-white mb-4">
             Phishing Awareness
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-lg text-gray-300">
             Learn to recognize and protect yourself from phishing attacks
           </p>
         </header>
 
         <div className="max-w-4xl mx-auto space-y-8">
           {/* What is Phishing */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-white mb-4">
               What is Phishing?
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               Phishing is a type of cyberattack where criminals impersonate legitimate organizations or individuals to trick you into revealing sensitive information such as passwords, credit card numbers, or personal data. These attacks typically occur through email, text messages, or fake websites.
             </p>
-            <p className="text-gray-700 dark:text-gray-300">
+            <p className="text-gray-300">
               The term "phishing" comes from "fishing" - attackers cast out fraudulent messages like bait, hoping someone will "bite" by clicking malicious links or providing confidential information.
             </p>
           </div>
 
           {/* Types of Phishing */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-white mb-4">
               Common Types of Phishing Attacks
             </h2>
 
@@ -47,7 +43,7 @@ export default function PhishingAwareness() {
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
                   📧 Email Phishing
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-300">
                   The most common form, where attackers send fraudulent emails appearing to be from banks, online services, or colleagues, asking you to click links or download attachments.
                 </p>
               </div>
@@ -56,7 +52,7 @@ export default function PhishingAwareness() {
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
                   🎯 Spear Phishing
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-300">
                   Targeted attacks aimed at specific individuals or organizations. Attackers research their victims and craft personalized messages that appear more legitimate.
                 </p>
               </div>
@@ -65,7 +61,7 @@ export default function PhishingAwareness() {
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
                   💬 SMS Phishing (Smishing)
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-300">
                   Phishing attacks delivered via text message, often claiming urgent account issues or package delivery problems to prompt immediate action.
                 </p>
               </div>
@@ -74,7 +70,7 @@ export default function PhishingAwareness() {
                 <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
                   📞 Voice Phishing (Vishing)
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-300">
                   Phone calls from scammers impersonating tech support, government agencies, or banks, pressuring victims to share sensitive information or make payments.
                 </p>
               </div>
@@ -82,8 +78,8 @@ export default function PhishingAwareness() {
           </div>
 
           {/* Warning Signs */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-white mb-4">
               Warning Signs of Phishing
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
@@ -150,8 +146,8 @@ export default function PhishingAwareness() {
           </div>
 
           {/* How to Protect Yourself */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-white mb-4">
               How to Protect Yourself
             </h2>
 
@@ -239,8 +235,8 @@ export default function PhishingAwareness() {
           </div>
 
           {/* Real-World Example */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-white mb-4">
               Example: Spotting a Phishing Email
             </h2>
 
@@ -280,7 +276,7 @@ export default function PhishingAwareness() {
           </div>
 
           {/* Navigation Options */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+          <div className="bg-gray-800 rounded-lg shadow-lg p-8">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
               Ready to Practice?
             </h2>

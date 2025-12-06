@@ -306,15 +306,11 @@ export default function PhishingSimulation() {
         </Link>
 
         <header className="text-center mb-12">
-          <div className="flex items-center justify-center w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full mx-auto mb-6">
-            <svg className="w-8 h-8 text-purple-600 dark:text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-            </svg>
-          </div>
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+          <div className="text-6xl mb-6">🎯</div>
+          <h1 className="text-4xl font-bold text-white mb-4">
             Phishing Simulation Training
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
             Practice identifying phishing attempts in realistic scenarios. Test your skills with suspicious emails, URLs, and fake login pages.
           </p>
         </header>
