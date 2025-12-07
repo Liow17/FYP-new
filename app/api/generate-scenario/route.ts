@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     const body: ScenarioRequest = await req.json().catch(() => ({}));
     const difficulty = body.difficulty || "medium";
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const difficultyInstructions: Record<string, string> = {
       easy: "Make the phishing indicators very obvious (e.g., poor grammar, obvious fake email addresses, suspicious links).",

@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Build chat history
     const chatHistory = history?.map((msg: { role: string; content: string }) => ({
