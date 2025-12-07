@@ -1,187 +1,180 @@
-"use client";
+import Link from 'next/link';
+import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
+import Quiz, { QuizQuestion } from '../components/Quiz';
 
-import { useState } from "react";
-import Link from "next/link";
-import zxcvbn from "zxcvbn";
+const quizQuestions: QuizQuestion[] = [
+  {
+    question: 'What is the minimum recommended length for a strong password?',
+    options: ['6 characters', '8 characters', '12 characters', '20 characters'],
+    correctAnswer: 2,
+    explanation: 'Security experts recommend passwords be at least 12 characters long. Longer passwords are exponentially harder to crack through brute-force attacks.',
+  },
+  {
+    question: 'Which of the following makes a password stronger?',
+    options: [
+      'Using your birthdate',
+      'Repeating the same character multiple times',
+      'Mixing uppercase, lowercase, numbers, and symbols',
+      'Using a common word from the dictionary',
+    ],
+    correctAnswer: 2,
+    explanation: 'A strong password uses a mix of character types (uppercase, lowercase, numbers, and symbols). This increases complexity and makes the password harder to guess or crack.',
+  },
+  {
+    question: 'Why should you avoid reusing passwords across different accounts?',
+    options: [
+      'It makes passwords easier to remember',
+      'If one account is compromised, all accounts with the same password are at risk',
+      'It is required by law',
+      'It has no security impact',
+    ],
+    correctAnswer: 1,
+    explanation: 'If you reuse passwords and one service is breached, attackers can use that password to access your other accounts. This is called credential stuffing.',
+  },
+  {
+    question: 'What is a passphrase?',
+    options: [
+      'A very short password',
+      'A password made up of multiple random words',
+      'A password written on a piece of paper',
+      'A password shared with others',
+    ],
+    correctAnswer: 1,
+    explanation: 'A passphrase is a sequence of random words or a sentence that is easy to remember but hard to crack. For example: "correct horse battery staple".',
+  },
+  {
+    question: 'Which of these is the most secure way to store your passwords?',
+    options: [
+      'Write them down on a sticky note',
+      'Save them in a text file on your desktop',
+      'Use a reputable password manager',
+      'Use the same password for everything so you only need to remember one',
+    ],
+    correctAnswer: 2,
+    explanation: 'A password manager securely encrypts and stores all your passwords, allowing you to use strong, unique passwords for each account without having to memorize them all.',
+  },
+  {
+    question: 'What should you do if you suspect a service you use has been breached?',
+    options: [
+      'Ignore it and hope for the best',
+      'Immediately change your password for that service',
+      'Delete your account',
+      'Share your password with customer support',
+    ],
+    correctAnswer: 1,
+    explanation: 'If a service has been breached, change your password immediately. Also change passwords on any other accounts where you used the same or similar password.',
+  },
+];
 
 export default function PasswordSecurity() {
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-
-  const result = password ? zxcvbn(password) : null;
-  const score = result?.score ?? 0;
-
-  const getStrengthLabel = (score: number) => {
-    const labels = ["Very Weak", "Weak", "Fair", "Strong", "Very Strong"];
-    return labels[score];
-  };
-
-  const getStrengthColor = (score: number) => {
-    const colors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-blue-500", "bg-green-500"];
-    return colors[score];
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-8">
-        <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block">
-          ← Back to Home
-        </Link>
+    <div className="min-h-screen bg-gray-900">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Header */}
+        <div className="mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
+          >
+            ← Back to Home
+          </Link>
+        </div>
 
-        <header className="text-center mb-12">
-          <div className="flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full mx-auto mb-6">
-            <svg className="w-8 h-8 text-blue-600 dark:text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-          </div>
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4 flex items-center">
+            <span className="mr-3">🔐</span>
             Password Security
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            Learn about creating strong, secure passwords and test your password strength with our interactive meter <span className="text-gray-500 dark:text-gray-400">powered by zxcvbn</span>.
+          <p className="text-lg text-gray-700">
+            Learn how to create and manage secure passwords to protect your digital identity.
           </p>
-        </header>
+        </div>
 
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Educational Content */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-              Why Password Security Matters
-            </h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Passwords are the first line of defense for your online accounts. Weak passwords can be easily guessed or cracked by attackers, leading to unauthorized access to your personal information, financial data, and digital identity.
+        {/* Educational Content */}
+        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Why Password Security Matters</h2>
+
+          <div className="prose prose-blue max-w-none">
+            <p className="text-gray-700 mb-4">
+              Passwords are the primary defense protecting your personal information, financial data, and online identity.
+              Weak passwords make it easy for attackers to gain unauthorized access to your accounts, potentially leading to
+              identity theft, financial loss, and privacy breaches.
             </p>
 
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-3 mt-6">
-              Characteristics of Strong Passwords
+            <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">
+              Common Password Mistakes
             </h3>
-            <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
-              <li><strong>Length:</strong> At least 12-16 characters (longer is better)</li>
-              <li><strong>Complexity:</strong> Mix of uppercase, lowercase, numbers, and special characters</li>
-              <li><strong>Unpredictability:</strong> Avoid common words, patterns, and personal information</li>
-              <li><strong>Uniqueness:</strong> Use different passwords for different accounts</li>
+            <ul className="space-y-2 text-gray-700 list-disc list-inside">
+              <li>Using personal information (names, birthdates, pet names)</li>
+              <li>Using common words or predictable patterns (e.g., "password123")</li>
+              <li>Reusing the same password across multiple accounts</li>
+              <li>Using short passwords (less than 12 characters)</li>
+              <li>Storing passwords insecurely (sticky notes, unencrypted files)</li>
             </ul>
 
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-3 mt-6">
-              Common Password Mistakes to Avoid
+            <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">
+              Best Practices for Strong Passwords
             </h3>
-            <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
-              <li>Using "password", "123456", or other common passwords</li>
-              <li>Including personal information (birthdays, names, addresses)</li>
-              <li>Using keyboard patterns (qwerty, asdfgh)</li>
-              <li>Reusing passwords across multiple accounts</li>
-              <li>Storing passwords in plain text</li>
-            </ul>
-
-            <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-3 mt-6">
-              Best Practices
-            </h3>
-            <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
-              <li>Use a password manager to generate and store complex passwords</li>
-              <li>Enable two-factor authentication (2FA) whenever possible</li>
-              <li>Change passwords if you suspect they've been compromised</li>
-              <li>Never share your passwords with others</li>
-              <li>Use passphrase techniques: combine random words (e.g., "correct-horse-battery-staple")</li>
-            </ul>
-          </div>
-
-          {/* Interactive Password Strength Meter */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-              Interactive Password Strength Meter
-            </h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-6">
-              Test different password combinations and see how strong they are. This tool uses zxcvbn, a password strength estimator created by Dropbox.
-            </p>
-
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Enter a password to test:
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                    placeholder="Type a password here..."
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </button>
-                </div>
-              </div>
-
-              {password && (
-                <div className="space-y-3">
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Strength: {getStrengthLabel(score)}
-                      </span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        Score: {score}/4
-                      </span>
-                    </div>
-                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full transition-all duration-300 ${getStrengthColor(score)}`}
-                        style={{ width: `${(score / 4) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  {result?.feedback.warning && (
-                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                      <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                        <strong>Warning:</strong> {result.feedback.warning}
-                      </p>
-                    </div>
-                  )}
-
-                  {result?.feedback.suggestions && result.feedback.suggestions.length > 0 && (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                      <p className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">
-                        Suggestions:
-                      </p>
-                      <ul className="list-disc list-inside text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                        {result.feedback.suggestions.map((suggestion, index) => (
-                          <li key={index}>{suggestion}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                      <p className="text-gray-600 dark:text-gray-400">Length</p>
-                      <p className="font-semibold text-gray-800 dark:text-white">{password.length} characters</p>
-                    </div>
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
-                      <p className="text-gray-600 dark:text-gray-400">Time to crack</p>
-                      <p className="font-semibold text-gray-800 dark:text-white">{result?.crack_times_display.offline_slow_hashing_1e4_per_second}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
+            <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
+              <ul className="space-y-2 text-gray-700">
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2 font-bold">✓</span>
+                  <span><strong>Length:</strong> Use at least 12 characters (longer is better)</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2 font-bold">✓</span>
+                  <span><strong>Complexity:</strong> Mix uppercase, lowercase, numbers, and symbols</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2 font-bold">✓</span>
+                  <span><strong>Uniqueness:</strong> Use different passwords for different accounts</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2 font-bold">✓</span>
+                  <span><strong>Unpredictability:</strong> Avoid dictionary words and personal information</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2 font-bold">✓</span>
+                  <span><strong>Tools:</strong> Consider using a password manager to generate and store passwords</span>
+                </li>
+              </ul>
             </div>
-          </div>
 
-          {/* Quiz Link */}
-          <div className="text-center">
-            <Link
-              href="/password-security/quiz"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition-colors"
-            >
-              Test Your Knowledge →
-            </Link>
+            <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">
+              Multi-Factor Authentication (MFA)
+            </h3>
+            <p className="text-gray-700 mb-4">
+              Even strong passwords can be compromised. Multi-factor authentication adds an extra layer of security
+              by requiring a second form of verification (like a code sent to your phone) in addition to your password.
+              Always enable MFA when available, especially for important accounts like email and banking.
+            </p>
           </div>
+        </div>
+
+        {/* Password Strength Meter */}
+        <div className="mb-8">
+          <PasswordStrengthMeter />
+        </div>
+
+        {/* Quiz Section */}
+        <div className="mb-8">
+          <Quiz questions={quizQuestions} title="Test Your Knowledge: Password Security Quiz" />
+        </div>
+
+        {/* Footer Navigation */}
+        <div className="flex justify-between items-center bg-white rounded-lg shadow-lg p-6">
+          <Link
+            href="/"
+            className="text-blue-600 hover:text-blue-800 font-medium"
+          >
+            ← Back to Home
+          </Link>
+          <Link
+            href="/phishing-awareness"
+            className="text-blue-600 hover:text-blue-800 font-medium"
+          >
+            Next Module: Phishing Awareness →
+          </Link>
         </div>
       </div>
     </div>

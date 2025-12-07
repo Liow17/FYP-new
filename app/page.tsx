@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-white mb-4">
@@ -13,10 +13,11 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        {/* Top Row - 2 Modules */}
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-8">
           {/* Password Security Module */}
           <Link href="/password-security">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-blue-500 hover:scale-105 duration-300">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-blue-500 duration-300">
               <div className="text-4xl mb-4">🔐</div>
               <h2 className="text-2xl font-bold text-white mb-3">
                 Password Security
@@ -50,7 +51,7 @@ export default function Home() {
 
           {/* Phishing Awareness Module */}
           <Link href="/phishing-awareness">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-red-500 hover:scale-105 duration-300">
+            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-red-500 duration-300">
               <div className="text-4xl mb-4">🎣</div>
               <h2 className="text-2xl font-bold text-white mb-3">
                 Phishing Awareness
@@ -73,7 +74,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-400 mr-2">✓</span>
-                  Knowledge assessment quiz
+                  Includes phishing simulation practice
                 </li>
               </ul>
               <div className="text-red-400 font-semibold">
@@ -81,74 +82,44 @@ export default function Home() {
               </div>
             </div>
           </Link>
+        </div>
 
-          {/* Phishing Simulation Module */}
-          <Link href="/phishing-simulation">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-purple-500 hover:scale-105 duration-300">
-              <div className="text-4xl mb-4">🎯</div>
-              <h2 className="text-2xl font-bold text-white mb-3">
-                Phishing Simulation
-              </h2>
-              <p className="text-gray-300 mb-4">
-                Practice identifying phishing attempts with realistic scenarios in a safe environment.
-              </p>
-              <ul className="text-sm text-gray-400 space-y-2 mb-4">
-                <li className="flex items-start">
-                  <span className="text-green-400 mr-2">✓</span>
-                  Email scenario analysis
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-400 mr-2">✓</span>
-                  URL safety inspection
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-400 mr-2">✓</span>
-                  Fake login page detection
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-400 mr-2">✓</span>
-                  Real-world phishing examples
-                </li>
-              </ul>
-              <div className="text-purple-400 font-semibold">
-                Start Learning →
+        {/* Bottom Row - 1 Module Centered */}
+        <div className="flex justify-center max-w-4xl mx-auto">
+          <div className="w-full md:w-1/2">
+            <Link href="/ai-assistant">
+              <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-green-500 duration-300">
+                <div className="text-4xl mb-4">🤖</div>
+                <h2 className="text-2xl font-bold text-white mb-3">
+                  AI Security Tutor
+                </h2>
+                <p className="text-gray-300 mb-4">
+                  Get instant answers to your cybersecurity questions from our intelligent AI assistant.
+                </p>
+                <ul className="text-sm text-gray-400 space-y-2 mb-4">
+                  <li className="flex items-start">
+                    <span className="text-green-400 mr-2">✓</span>
+                    Ask about phishing & passwords
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-400 mr-2">✓</span>
+                    Get personalized advice
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-400 mr-2">✓</span>
+                    Learn best practices
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-green-400 mr-2">✓</span>
+                    24/7 availability
+                  </li>
+                </ul>
+                <div className="text-green-400 font-semibold">
+                  Start Learning →
+                </div>
               </div>
-            </div>
-          </Link>
-
-          {/* AI Assistant Module */}
-          <Link href="/ai-assistant">
-            <div className="bg-gray-800 rounded-lg shadow-lg p-8 hover:shadow-2xl transition-all cursor-pointer border-2 border-gray-700 hover:border-green-500 hover:scale-105 duration-300">
-              <div className="text-4xl mb-4">🤖</div>
-              <h2 className="text-2xl font-bold text-white mb-3">
-                AI Security Tutor
-              </h2>
-              <p className="text-gray-300 mb-4">
-                Get instant answers to your cybersecurity questions from our intelligent AI assistant.
-              </p>
-              <ul className="text-sm text-gray-400 space-y-2 mb-4">
-                <li className="flex items-start">
-                  <span className="text-green-400 mr-2">✓</span>
-                  Ask about phishing & passwords
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-400 mr-2">✓</span>
-                  Get personalized advice
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-400 mr-2">✓</span>
-                  Learn best practices
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-400 mr-2">✓</span>
-                  24/7 availability
-                </li>
-              </ul>
-              <div className="text-green-400 font-semibold">
-                Start Learning →
-              </div>
-            </div>
-          </Link>
+            </Link>
+          </div>
         </div>
 
         <div className="mt-16 text-center">
