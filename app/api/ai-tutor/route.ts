@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
     const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
 
