@@ -5,7 +5,13 @@ import { fetch as undiciFetch } from "undici";
 // Use undici's fetch for better compatibility
 global.fetch = undiciFetch as any;
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+// Validate API key exists
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  console.error("GEMINI_API_KEY is not set in environment variables");
+}
+
+const genAI = new GoogleGenerativeAI(apiKey || "");
 
 const SYSTEM_PROMPT = `You are a helpful cybersecurity education assistant specializing in phishing awareness and password security. Your role is to:
 
@@ -19,6 +25,14 @@ Keep your responses concise, friendly, and educational. Focus on practical tips 
 
 export async function POST(req: NextRequest) {
   try {
+    // Check if API key is configured
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "API key not configured. Please set GEMINI_API_KEY in .env.local file." },
+        { status: 500 }
+      );
+    }
+
     const { message, history } = await req.json();
 
     if (!message || typeof message !== "string") {
