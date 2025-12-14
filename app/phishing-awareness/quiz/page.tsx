@@ -229,12 +229,16 @@ export default function PhishingQuiz() {
         {submitted && (
           <div className="max-w-3xl mx-auto mb-8">
             <div className={`rounded-lg shadow-lg p-8 ${
-              isPassing ? "bg-green-50 dark:bg-green-900/20 border-2 border-green-500" : "bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-500"
+              isPassing ? "bg-green-100 dark:bg-green-800/40 border-2 border-green-500" : "bg-red-100 dark:bg-red-800/40 border-2 border-red-500"
             }`}>
-              <h2 className="text-3xl font-bold text-center mb-4">
+              <h2 className={`text-3xl font-bold text-center mb-4 ${
+                isPassing ? "text-green-800 dark:text-green-100" : "text-red-800 dark:text-red-100"
+              }`}>
                 Your Score: {score}/{questions.length} ({percentage}%)
               </h2>
-              <p className="text-center text-lg mb-4">
+              <p className={`text-center text-lg mb-4 ${
+                isPassing ? "text-green-700 dark:text-green-200" : "text-red-700 dark:text-red-200"
+              }`}>
                 {percentage >= 90 ? "Excellent! You're well-prepared to spot phishing attempts." :
                  isPassing ? "Good job! Review the explanations to further strengthen your defenses." :
                  "Keep learning! Understanding these concepts will help protect you from attacks."}

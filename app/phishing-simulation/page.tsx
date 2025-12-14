@@ -159,10 +159,14 @@ export default function PhishingSimulation() {
   // URL simulation state
   const [urlAnswers, setUrlAnswers] = useState<{ [key: number]: boolean | null }>({});
   const [showUrlExplanations, setShowUrlExplanations] = useState<{ [key: number]: boolean }>({});
+  const [isGeneratingUrl, setIsGeneratingUrl] = useState(false);
+  const [generatedUrlScenarios, setGeneratedUrlScenarios] = useState<URLScenario[]>([]);
 
   // Login page simulation state
   const [loginAnswers, setLoginAnswers] = useState<{ [key: number]: boolean | null }>({});
   const [showLoginExplanations, setShowLoginExplanations] = useState<{ [key: number]: boolean }>({});
+  const [isGeneratingLogin, setIsGeneratingLogin] = useState(false);
+  const [generatedLoginScenarios, setGeneratedLoginScenarios] = useState<LoginPageScenario[]>([]);
 
   // Get the current email (either dynamic or from static scenarios)
   const currentEmail = useDynamicEmail && dynamicEmail
@@ -340,6 +344,83 @@ export default function PhishingSimulation() {
     setShowLoginExplanations({ ...showLoginExplanations, [id]: true });
   };
 
+  // Generate new URL scenario
+  const generateNewUrlScenario = async () => {
+    setIsGeneratingUrl(true);
+    try {
+      const response = await fetch("/api/generate-url-scenario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate URL scenario");
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+        return;
+      }
+
+      // Add new scenario to generated list with a unique ID
+      const newId = urlScenarios.length + generatedUrlScenarios.length + 1;
+      const newScenario: URLScenario = {
+        ...data.scenario,
+        id: newId,
+      };
+
+      setGeneratedUrlScenarios([...generatedUrlScenarios, newScenario]);
+    } catch (error) {
+      console.error("Error generating URL scenario:", error);
+      alert("Unable to generate a new URL scenario. This feature requires network access.");
+    } finally {
+      setIsGeneratingUrl(false);
+    }
+  };
+
+  // Generate new login page scenario
+  const generateNewLoginScenario = async () => {
+    setIsGeneratingLogin(true);
+    try {
+      const response = await fetch("/api/generate-login-scenario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate login scenario");
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+        return;
+      }
+
+      // Add new scenario to generated list with a unique ID
+      const newId = loginPageScenarios.length + generatedLoginScenarios.length + 1;
+      const newScenario: LoginPageScenario = {
+        ...data.scenario,
+        id: newId,
+        hasSpellingErrors: false, // AI doesn't generate this field, so default to false
+      };
+
+      setGeneratedLoginScenarios([...generatedLoginScenarios, newScenario]);
+    } catch (error) {
+      console.error("Error generating login scenario:", error);
+      alert("Unable to generate a new login scenario. This feature requires network access.");
+    } finally {
+      setIsGeneratingLogin(false);
+    }
+  };
+
+  // Combine static and generated scenarios
+  const allUrlScenarios = [...urlScenarios, ...generatedUrlScenarios];
+  const allLoginScenarios = [...loginPageScenarios, ...generatedLoginScenarios];
+
   const emailId = currentEmail.id || 0;
   const currentEmailIsPhishing = currentEmail.isPhishing || currentEmail.type?.toLowerCase() === 'phishing';
   const isEmailCorrect = emailAnswers[emailId] === currentEmailIsPhishing;
@@ -361,6 +442,37 @@ export default function PhishingSimulation() {
             Practice identifying phishing attempts in realistic scenarios. Test your skills with suspicious emails, URLs, and fake login pages.
           </p>
         </header>
+
+        {/* Key Takeaways */}
+        <section className="max-w-4xl mx-auto mb-16">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 rounded-lg p-6">
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
+              💡 Key Takeaways
+            </h3>
+            <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span><strong>Always verify the sender's email domain</strong> - Look for misspellings or suspicious domains</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span><strong>Check for HTTPS and the exact domain</strong> - Don't be fooled by similar-looking URLs</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span><strong>Be suspicious of urgency and threats</strong> - Legitimate companies don't threaten account deletion</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span><strong>Hover over links before clicking</strong> - The displayed text may not match the actual URL</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 dark:text-blue-400">•</span>
+                <span><strong>When in doubt, go directly to the official website</strong> - Don't click email links for sensitive actions</span>
+              </li>
+            </ul>
+          </div>
+        </section>
 
         {/* Phishing Detector */}
         <section className="max-w-4xl mx-auto mb-16">
@@ -507,14 +619,9 @@ export default function PhishingSimulation() {
               )}
             </button>
           </div>
-          <p className="text-center text-gray-600 dark:text-gray-300 mb-2">
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
             Examine the email below. Is it legitimate or a phishing attempt?
           </p>
-          {useDynamicEmail && (
-            <p className="text-center text-sm text-purple-600 dark:text-purple-400 mb-6 font-semibold">
-              🤖 AI-Generated Scenario - Powered by Google Gemini
-            </p>
-          )}
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 mb-6">
             {/* Email Header */}
@@ -613,52 +720,80 @@ export default function PhishingSimulation() {
           </div>
 
           {/* Navigation */}
-          <div className="flex justify-between items-center">
-            <button
-              onClick={handlePrevEmail}
-              disabled={!useDynamicEmail && currentEmailIndex === 0}
-              className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-                !useDynamicEmail && currentEmailIndex === 0
-                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-            >
-              ← {useDynamicEmail ? 'Back to Examples' : 'Previous'}
-            </button>
+          {useDynamicEmail ? (
+            <div className="flex justify-center items-center">
+              <button
+                onClick={handlePrevEmail}
+                className="px-6 py-2 rounded-lg font-semibold transition-colors bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                ← Back to Examples
+              </button>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center">
+              <button
+                onClick={handlePrevEmail}
+                disabled={currentEmailIndex === 0}
+                className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                  currentEmailIndex === 0
+                    ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                }`}
+              >
+                ← Previous
+              </button>
 
-            <span className="text-gray-600 dark:text-gray-300">
-              {useDynamicEmail ? (
-                <span className="text-purple-600 dark:text-purple-400 font-semibold">AI-Generated</span>
-              ) : (
-                <>Email {currentEmailIndex + 1} of {emailScenarios.length}</>
-              )}
-            </span>
+              <span className="text-gray-600 dark:text-gray-300">
+                Email {currentEmailIndex + 1} of {emailScenarios.length}
+              </span>
 
-            <button
-              onClick={handleNextEmail}
-              disabled={!useDynamicEmail && currentEmailIndex === emailScenarios.length - 1}
-              className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
-                !useDynamicEmail && currentEmailIndex === emailScenarios.length - 1
-                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-            >
-              {useDynamicEmail ? 'Back to Examples →' : 'Next →'}
-            </button>
-          </div>
+              <button
+                onClick={handleNextEmail}
+                disabled={currentEmailIndex === emailScenarios.length - 1}
+                className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                  currentEmailIndex === emailScenarios.length - 1
+                    ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                }`}
+              >
+                Next →
+              </button>
+            </div>
+          )}
         </section>
 
         {/* URL Analysis Simulation */}
         <section className="max-w-4xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
-            🔗 URL Safety Analysis
-          </h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
+              🔗 URL Safety Analysis
+            </h2>
+            <button
+              onClick={generateNewUrlScenario}
+              disabled={isGeneratingUrl}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all flex items-center gap-2"
+            >
+              {isGeneratingUrl ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Generate New Question
+                </>
+              )}
+            </button>
+          </div>
           <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
             Examine each URL carefully. Can you spot the phishing links?
           </p>
 
           <div className="space-y-6">
-            {urlScenarios.map((scenario) => {
+            {allUrlScenarios.map((scenario) => {
               const userAnswer = urlAnswers[scenario.id];
               const isCorrect = userAnswer === scenario.isPhishing;
               const hasAnswered = userAnswer !== undefined && userAnswer !== null;
@@ -714,15 +849,36 @@ export default function PhishingSimulation() {
 
         {/* Login Page Detection Simulation */}
         <section className="max-w-4xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
-            🔐 Fake Login Page Detection
-          </h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-3xl font-bold text-gray-800 dark:text-white">
+              🔐 Fake Login Page Detection
+            </h2>
+            <button
+              onClick={generateNewLoginScenario}
+              disabled={isGeneratingLogin}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all flex items-center gap-2"
+            >
+              {isGeneratingLogin ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Generate New Question
+                </>
+              )}
+            </button>
+          </div>
           <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
             Analyze these login pages. Which ones are fake?
           </p>
 
           <div className="space-y-6">
-            {loginPageScenarios.map((scenario) => {
+            {allLoginScenarios.map((scenario) => {
               const userAnswer = loginAnswers[scenario.id];
               const isCorrect = userAnswer === scenario.isPhishing;
               const hasAnswered = userAnswer !== undefined && userAnswer !== null;
@@ -780,36 +936,6 @@ export default function PhishingSimulation() {
           </div>
         </section>
 
-        {/* Summary Tips */}
-        <section className="max-w-4xl mx-auto">
-          <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 rounded-lg p-6">
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-              💡 Key Takeaways
-            </h3>
-            <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400">•</span>
-                <span><strong>Always verify the sender's email domain</strong> - Look for misspellings or suspicious domains</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400">•</span>
-                <span><strong>Check for HTTPS and the exact domain</strong> - Don't be fooled by similar-looking URLs</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400">•</span>
-                <span><strong>Be suspicious of urgency and threats</strong> - Legitimate companies don't threaten account deletion</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400">•</span>
-                <span><strong>Hover over links before clicking</strong> - The displayed text may not match the actual URL</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-blue-600 dark:text-blue-400">•</span>
-                <span><strong>When in doubt, go directly to the official website</strong> - Don't click email links for sensitive actions</span>
-              </li>
-            </ul>
-          </div>
-        </section>
       </div>
     </div>
   );
