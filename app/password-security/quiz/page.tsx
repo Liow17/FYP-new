@@ -11,7 +11,7 @@ interface Question {
   explanation: string;
 }
 
-const questions: Question[] = [
+const defaultQuestions: Question[] = [
   {
     id: 1,
     question: "What is the minimum recommended length for a strong password?",
@@ -124,9 +124,13 @@ const questions: Question[] = [
   }
 ];
 
+const PASSING_SCORE = 70; // 70% passing score
+
 export default function PasswordQuiz() {
+  const [questions, setQuestions] = useState<Question[]>(defaultQuestions);
   const [answers, setAnswers] = useState<{ [key: number]: number }>({});
   const [submitted, setSubmitted] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleAnswerSelect = (questionId: number, answerIndex: number) => {
     if (!submitted) {
@@ -146,6 +150,38 @@ export default function PasswordQuiz() {
     setSubmitted(false);
   };
 
+  const handleGenerateNew = async () => {
+    setIsGenerating(true);
+    try {
+      const response = await fetch("/api/generate-password-quiz", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate quiz");
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+        return;
+      }
+
+      // Update questions with new AI-generated questions
+      setQuestions(data.questions);
+      setAnswers({});
+      setSubmitted(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      console.error("Error generating quiz:", error);
+      alert("Unable to generate a new quiz. This feature requires network access and API configuration.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const calculateScore = () => {
     let correct = 0;
     questions.forEach((q) => {
@@ -158,14 +194,18 @@ export default function PasswordQuiz() {
 
   const score = submitted ? calculateScore() : 0;
   const percentage = submitted ? Math.round((score / questions.length) * 100) : 0;
+  const isPassing = percentage >= PASSING_SCORE;
 
   return (
     <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-8">
-        <Link href="/password-security" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block">
-          ← Back to Password Security
+        {/* Back Button */}
+        <Link href="/password-security" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block flex items-center gap-2">
+          <span>←</span>
+          <span>Back to Password Security</span>
         </Link>
 
+        {/* Header */}
         <header className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
             Password Security Quiz
@@ -175,31 +215,54 @@ export default function PasswordQuiz() {
           </p>
         </header>
 
+        {/* Score Display */}
         {submitted && (
           <div className="max-w-3xl mx-auto mb-8">
             <div className={`rounded-lg shadow-lg p-8 ${
-              percentage >= 70 ? "bg-green-50 dark:bg-green-900/20 border-2 border-green-500" : "bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-500"
+              isPassing ? "bg-green-50 dark:bg-green-900/20 border-2 border-green-500" : "bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-500"
             }`}>
               <h2 className="text-3xl font-bold text-center mb-4">
                 Your Score: {score}/{questions.length} ({percentage}%)
               </h2>
               <p className="text-center text-lg mb-4">
                 {percentage >= 90 ? "Excellent! You have a strong understanding of password security." :
-                 percentage >= 70 ? "Good job! Review the explanations below to strengthen your knowledge." :
+                 isPassing ? "Good job! Review the explanations below to strengthen your knowledge." :
                  "Keep learning! Review the explanations to improve your understanding."}
               </p>
-              <div className="text-center">
+              <div className="flex gap-4 justify-center flex-wrap">
                 <button
                   onClick={handleRetry}
                   className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
                 >
-                  Retry Quiz
+                  Try Again
                 </button>
+                {isPassing && (
+                  <button
+                    onClick={handleGenerateNew}
+                    disabled={isGenerating}
+                    className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white font-semibold px-6 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Generate New Questions
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </div>
         )}
 
+        {/* Questions */}
         <div className="max-w-3xl mx-auto space-y-6">
           {questions.map((q, index) => {
             const isAnswered = answers[q.id] !== undefined;
@@ -283,6 +346,7 @@ export default function PasswordQuiz() {
           })}
         </div>
 
+        {/* Submit Button */}
         {!submitted && (
           <div className="max-w-3xl mx-auto mt-8 text-center">
             <button

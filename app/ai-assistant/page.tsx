@@ -99,8 +99,9 @@ export default function AIAssistant() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8 max-w-5xl">
-        <Link href="/" className="text-green-600 dark:text-green-400 hover:underline mb-8 inline-block">
-          ← Back to Home
+        <Link href="/" className="text-green-600 dark:text-green-400 hover:underline mb-8 inline-block flex items-center gap-2">
+          <span>🏠</span>
+          <span>← Back to Home</span>
         </Link>
 
         <header className="text-center mb-8">

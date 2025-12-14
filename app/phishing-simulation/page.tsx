@@ -140,6 +140,12 @@ const loginPageScenarios: LoginPageScenario[] = [
 ];
 
 export default function PhishingSimulation() {
+  // Phishing Detector state
+  const [detectorInput, setDetectorInput] = useState("");
+  const [detectorType, setDetectorType] = useState<"email" | "url">("email");
+  const [isDetecting, setIsDetecting] = useState(false);
+  const [detectionResult, setDetectionResult] = useState<any>(null);
+
   // Email simulation state
   const [currentEmailIndex, setCurrentEmailIndex] = useState(0);
   const [emailAnswers, setEmailAnswers] = useState<{ [key: number]: boolean | null }>({});
@@ -162,6 +168,46 @@ export default function PhishingSimulation() {
   const currentEmail = useDynamicEmail && dynamicEmail
     ? dynamicEmail
     : emailScenarios[currentEmailIndex];
+
+  // Detect phishing in user-provided content
+  const handleDetectPhishing = async () => {
+    if (!detectorInput.trim()) {
+      alert("Please enter some content to analyze.");
+      return;
+    }
+
+    setIsDetecting(true);
+    setDetectionResult(null);
+
+    try {
+      const response = await fetch("/api/detect-phishing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: detectorInput,
+          type: detectorType,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to detect phishing");
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+        return;
+      }
+
+      setDetectionResult(data.analysis);
+    } catch (error) {
+      console.error("Error detecting phishing:", error);
+      alert("Unable to analyze content. This feature requires network access and API configuration.");
+    } finally {
+      setIsDetecting(false);
+    }
+  };
 
   // Generate a new dynamic phishing scenario
   const generateNewScenario = async () => {
@@ -301,8 +347,9 @@ export default function PhishingSimulation() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8">
-        <Link href="/" className="text-purple-600 dark:text-purple-400 hover:underline mb-8 inline-block">
-          ← Back to Home
+        <Link href="/" className="text-purple-600 dark:text-purple-400 hover:underline mb-8 inline-block flex items-center gap-2">
+          <span>🏠</span>
+          <span>← Back to Home</span>
         </Link>
 
         <header className="text-center mb-12">
@@ -314,6 +361,125 @@ export default function PhishingSimulation() {
             Practice identifying phishing attempts in realistic scenarios. Test your skills with suspicious emails, URLs, and fake login pages.
           </p>
         </header>
+
+        {/* Phishing Detector */}
+        <section className="max-w-4xl mx-auto mb-16">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 text-center">
+            🔍 Phishing Email & Link Detector
+          </h2>
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
+            Paste a suspicious email or URL below and let AI analyze it for phishing indicators
+          </p>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
+            {/* Type selector */}
+            <div className="flex gap-4 mb-4 justify-center">
+              <button
+                onClick={() => setDetectorType("email")}
+                className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                  detectorType === "email"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                }`}
+              >
+                📧 Email Content
+              </button>
+              <button
+                onClick={() => setDetectorType("url")}
+                className={`px-6 py-2 rounded-lg font-semibold transition-colors ${
+                  detectorType === "url"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                }`}
+              >
+                🔗 URL/Link
+              </button>
+            </div>
+
+            {/* Input area */}
+            <textarea
+              value={detectorInput}
+              onChange={(e) => setDetectorInput(e.target.value)}
+              placeholder={
+                detectorType === "email"
+                  ? "Paste the email content here (including sender, subject, and body)..."
+                  : "Paste the suspicious URL here (e.g., http://paypa1.com/login)..."
+              }
+              className="w-full h-40 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-mono text-sm resize-none"
+            />
+
+            {/* Analyze button */}
+            <div className="mt-4 text-center">
+              <button
+                onClick={handleDetectPhishing}
+                disabled={isDetecting || !detectorInput.trim()}
+                className={`px-8 py-3 rounded-lg font-semibold transition-colors ${
+                  isDetecting || !detectorInput.trim()
+                    ? "bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                }`}
+              >
+                {isDetecting ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Analyzing...
+                  </span>
+                ) : (
+                  "🔍 Analyze for Phishing"
+                )}
+              </button>
+            </div>
+
+            {/* Detection Result */}
+            {detectionResult && (
+              <div className="mt-6">
+                <div
+                  className={`p-6 rounded-lg border-2 ${
+                    detectionResult.isPhishing
+                      ? "bg-red-50 dark:bg-red-900/20 border-red-500"
+                      : "bg-green-50 dark:bg-green-900/20 border-green-500"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="text-4xl">
+                      {detectionResult.isPhishing ? "🚨" : "✅"}
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-800 dark:text-white">
+                        {detectionResult.isPhishing ? "Phishing Detected!" : "Looks Safe"}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Risk Level: <span className="font-semibold capitalize">{detectionResult.riskLevel}</span> |
+                        Confidence: <span className="font-semibold capitalize">{detectionResult.confidence}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {detectionResult.redFlags && detectionResult.redFlags.length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="font-bold text-gray-800 dark:text-white mb-2">🚩 Red Flags Found:</h4>
+                      <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-300">
+                        {detectionResult.redFlags.map((flag: string, index: number) => (
+                          <li key={index}>{flag}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="mb-4">
+                    <h4 className="font-bold text-gray-800 dark:text-white mb-2">📊 Analysis:</h4>
+                    <p className="text-gray-700 dark:text-gray-300">{detectionResult.analysis}</p>
+                  </div>
+
+                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border-l-4 border-blue-500">
+                    <h4 className="font-bold text-blue-800 dark:text-blue-200 mb-2">💡 Recommendation:</h4>
+                    <p className="text-blue-700 dark:text-blue-300">{detectionResult.recommendation}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
 
         {/* Email Scenario Simulation */}
         <section className="max-w-4xl mx-auto mb-16">

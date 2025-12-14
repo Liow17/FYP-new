@@ -4,8 +4,9 @@ export default function PhishingAwareness() {
   return (
     <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-8">
-        <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block">
-          ← Back to Home
+        <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block flex items-center gap-2">
+          <span>🏠</span>
+          <span>← Back to Home</span>
         </Link>
 
         <header className="text-center mb-12">
