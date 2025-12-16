@@ -637,35 +637,9 @@ export default function PhishingSimulation() {
             {/* Explanation */}
             {showEmailExplanation && (
               <div className="space-y-4">
-                {/* AI Tutor Feedback */}
-                {isLoadingFeedback ? (
-                  <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 p-6 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                      <p className="text-blue-800 dark:text-blue-200 font-semibold">
-                        🤖 AI Tutor is analyzing your answer...
-                      </p>
-                    </div>
-                  </div>
-                ) : aiTutorFeedback && (
-                  <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 p-6 rounded-lg">
-                    <div className="flex items-start gap-3">
-                      <div className="text-3xl">🤖</div>
-                      <div>
-                        <h4 className="text-lg font-bold text-blue-800 dark:text-blue-200 mb-2">
-                          AI Tutor Feedback
-                        </h4>
-                        <p className="text-gray-800 dark:text-gray-200">
-                          {aiTutorFeedback}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {/* Standard Explanation */}
                 <div className={`p-6 rounded-lg ${isEmailCorrect ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-500' : 'bg-red-50 dark:bg-red-900/20 border-2 border-red-500'}`}>
-                  <h3 className="text-xl font-bold mb-3">
+                  <h3 className="text-xl font-bold mb-3 text-gray-800 dark:text-white">
                     {isEmailCorrect ? '✅ Correct!' : '❌ Incorrect'}
                   </h3>
 
