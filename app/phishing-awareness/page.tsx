@@ -293,7 +293,7 @@ export default function PhishingAwareness() {
                     </svg>
                   </div>
                   <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-3 text-center">
-                    Take the Quiz
+                    Phishing Awareness Quiz
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300 text-sm text-center">
                     Test your understanding with 10 questions about phishing awareness and best practices
