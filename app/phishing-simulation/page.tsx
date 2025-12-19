@@ -144,8 +144,6 @@ export default function PhishingSimulation() {
   const [emailAnswers, setEmailAnswers] = useState<{ [key: number]: boolean | null }>({});
   const [showEmailExplanation, setShowEmailExplanation] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [aiTutorFeedback, setAiTutorFeedback] = useState<string>("");
-  const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
   const [dynamicEmail, setDynamicEmail] = useState<EmailScenario | null>(null);
   const [useDynamicEmail, setUseDynamicEmail] = useState(false);
 
@@ -204,7 +202,6 @@ export default function PhishingSimulation() {
   // Generate a new dynamic phishing scenario
   const generateNewScenario = async () => {
     setIsGenerating(true);
-    setAiTutorFeedback("");
     setShowEmailExplanation(false);
     try {
       const response = await fetch("/api/generate-scenario", {
@@ -245,57 +242,10 @@ export default function PhishingSimulation() {
     }
   };
 
-  // Get AI Tutor feedback
-  const getAITutorFeedback = async (userAnswer: string, correctAnswer: string) => {
-    setIsLoadingFeedback(true);
-    try {
-      const response = await fetch("/api/ai-tutor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          scenario: {
-            from: currentEmail.from,
-            subject: currentEmail.subject,
-            body: currentEmail.body,
-            type: currentEmail.type || (currentEmail.isPhishing ? "Phishing" : "Legitimate"),
-            redFlags: currentEmail.redFlags,
-          },
-          userAnswer,
-          correctAnswer,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to get feedback");
-      }
-
-      const data = await response.json();
-
-      if (data.error) {
-        setAiTutorFeedback("Unable to get AI feedback at this time.");
-      } else {
-        setAiTutorFeedback(data.feedback);
-      }
-    } catch (error) {
-      console.error("Error getting AI feedback:", error);
-      setAiTutorFeedback("AI Tutor is unavailable. This feature requires network access.");
-    } finally {
-      setIsLoadingFeedback(false);
-    }
-  };
-
   const handleEmailAnswer = async (isPhishing: boolean) => {
     const emailId = currentEmail.id || 0;
     setEmailAnswers({ ...emailAnswers, [emailId]: isPhishing });
     setShowEmailExplanation(true);
-
-    // Get AI Tutor feedback
-    const userAnswer = isPhishing ? "Phishing" : "Legitimate";
-    const correctAnswer = (currentEmail.isPhishing || currentEmail.type?.toLowerCase() === "phishing")
-      ? "Phishing"
-      : "Legitimate";
-
-    await getAITutorFeedback(userAnswer, correctAnswer);
   };
 
   const handleNextEmail = () => {
@@ -303,7 +253,6 @@ export default function PhishingSimulation() {
       // In dynamic mode, reset to allow new generation
       setUseDynamicEmail(false);
       setDynamicEmail(null);
-      setAiTutorFeedback("");
     } else if (currentEmailIndex < emailScenarios.length - 1) {
       setCurrentEmailIndex(currentEmailIndex + 1);
     }
@@ -315,7 +264,6 @@ export default function PhishingSimulation() {
       // Exit dynamic mode and go back to static scenarios
       setUseDynamicEmail(false);
       setDynamicEmail(null);
-      setAiTutorFeedback("");
     } else if (currentEmailIndex > 0) {
       setCurrentEmailIndex(currentEmailIndex - 1);
     }

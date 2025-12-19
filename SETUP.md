@@ -81,9 +81,10 @@ npm run dev
 
 After setup, verify these files exist:
 - ✅ `.env.local` (contains API key)
-- ✅ `app/api/chat/route.ts` (line 45 should have `gemini-2.5-flash`)
-- ✅ `app/api/ai-tutor/route.ts` (line 46 should have `gemini-2.5-flash`)
-- ✅ `app/api/generate-scenario/route.ts` (line 53 should have `gemini-2.5-flash`)
+- ✅ `app/api/detect-phishing/route.ts` (should have `gemini-2.5-flash`)
+- ✅ `app/api/generate-scenario/route.ts` (should have `gemini-2.5-flash`)
+- ✅ `app/api/generate-url-scenario/route.ts` (should have `gemini-2.5-flash`)
+- ✅ `app/api/generate-login-scenario/route.ts` (should have `gemini-2.5-flash`)
 
 ## Model Information
 
