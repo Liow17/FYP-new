@@ -347,9 +347,9 @@ export default function PhishingSimulation() {
   const isEmailCorrect = emailAnswers[emailId] === currentEmailIsPhishing;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 to-pink-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8">
-        <Link href="/phishing-awareness" className="text-purple-600 dark:text-purple-400 hover:underline mb-8 inline-block flex items-center gap-2">
+        <Link href="/phishing-awareness" className="text-purple-600 dark:text-purple-400 hover:underline mb-8 inline-block items-center gap-2">
           <span>🏠</span>
           <span>← Back to Phishing Awareness</span>
         </Link>
@@ -449,7 +449,7 @@ export default function PhishingSimulation() {
                 className={`px-8 py-3 rounded-lg font-semibold transition-colors ${
                   isDetecting || !detectorInput.trim()
                     ? "bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed"
-                    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                    : "bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                 }`}
               >
                 {isDetecting ? (
@@ -523,7 +523,7 @@ export default function PhishingSimulation() {
             <button
               onClick={generateNewScenario}
               disabled={isGenerating}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all flex items-center gap-2"
+              className="bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all flex items-center gap-2"
             >
               {isGenerating ? (
                 <>
@@ -666,7 +666,7 @@ export default function PhishingSimulation() {
             <button
               onClick={generateNewPhishingScenarios}
               disabled={isGeneratingPhishing}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all flex items-center gap-2"
+              className="bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all flex items-center gap-2"
             >
               {isGeneratingPhishing ? (
                 <>

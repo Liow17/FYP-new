@@ -200,7 +200,7 @@ export default function PasswordQuiz() {
     <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         {/* Back Button */}
-        <Link href="/password-security" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block flex items-center gap-2">
+        <Link href="/password-security" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block items-center gap-2">
           <span>←</span>
           <span>Back to Password Security</span>
         </Link>

@@ -5,7 +5,7 @@ export default function PasswordSecurity() {
     <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         {/* Back to Home Button */}
-        <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block flex items-center gap-2">
+        <Link href="/" className="text-blue-600 dark:text-blue-400 hover:underline mb-8 inline-block items-center gap-2">
           <span>🏠</span>
           <span>Back to Home</span>
         </Link>
@@ -94,7 +94,7 @@ export default function PasswordSecurity() {
             <div className="grid md:grid-cols-2 gap-6">
               {/* Quiz Option */}
               <Link href="/password-security/quiz">
-                <div className="bg-gradient-to-br from-blue-900/40 to-indigo-900/40 border-2 border-blue-500 rounded-lg p-6 hover:shadow-xl transition-all cursor-pointer h-full">
+                <div className="bg-linear-to-br from-blue-900/40 to-indigo-900/40 border-2 border-blue-500 rounded-lg p-6 hover:shadow-xl transition-all cursor-pointer h-full">
                   <div className="flex items-center justify-center w-12 h-12 bg-blue-600 rounded-full mb-4 mx-auto">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -111,7 +111,7 @@ export default function PasswordSecurity() {
 
               {/* Password Strength Meter Option */}
               <Link href="/password-security/strength-meter">
-                <div className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 border-2 border-purple-500 rounded-lg p-6 hover:shadow-xl transition-all cursor-pointer h-full">
+                <div className="bg-linear-to-br from-purple-900/40 to-pink-900/40 border-2 border-purple-500 rounded-lg p-6 hover:shadow-xl transition-all cursor-pointer h-full">
                   <div className="flex items-center justify-center w-12 h-12 bg-purple-600 rounded-full mb-4 mx-auto">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
